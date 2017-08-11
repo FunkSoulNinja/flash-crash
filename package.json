@@ -1,0 +1,22 @@
+{
+  "name": "flash-crash",
+  "version": "0.0.0",
+  "description": "Hello Expo!",
+  "author": null,
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "dependencies": {
+    "expo": "^19.0.0",
+    "lodash": "^4.17.4",
+    "react": "16.0.0-alpha.12",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-19.0.0.tar.gz",
+    "react-native-elements": "^0.15.0",
+    "react-native-keyboard-aware-scroll-view": "^0.3.0",
+    "react-native-swipeout": "^2.2.2",
+    "react-navigation": "^1.0.0-beta.11",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2",
+    "redux-persist": "^4.8.3",
+    "reselect": "^3.0.1"
+  }
+}

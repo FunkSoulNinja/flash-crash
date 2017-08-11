@@ -1,0 +1,5 @@
+export const RED = 'rgb(203, 48, 48)'
+export const BACKGROUND_GREY = 'rgb(64, 64, 64)'
+export const BLUE_GREY = 'rgb(65, 66, 74)'
+export const LIGHT_GREY = 'rgb(220, 220, 220)'
+export const GREEN = 'rgb(59, 161, 88)'
