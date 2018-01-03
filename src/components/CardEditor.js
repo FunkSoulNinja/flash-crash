@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, StyleSheet, Image, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, Image, LayoutAnimation, UIManager } from 'react-native';
+import { Form, Item, Input, Label, Text } from 'native-base';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
 import { ImagePicker } from 'expo';
 
 import { updateCard } from '../actions/cardActions';
+
+UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const greyColor = 'rgb(143, 143, 143)';
 const imageButtonColor = 'rgb(55, 90, 119)';
@@ -16,18 +20,13 @@ class CardEditor extends Component {
         super(props);
 
         this.state = {
-            image: this.props.cardProps.image,
-            question: this.props.cardProps.question,
-            answer: this.props.cardProps.answer,
-            questionHeight: 0,
-            answerHeight: 0
+            image: this.props.cardProps.image || null,
+            question: this.props.cardProps.question || '',
+            answer: this.props.cardProps.answer || ''
         };
     }
     setImage(image) {
-        this.setState(() => {
-            LayoutAnimation.spring();
-            return { image };
-        });
+        this.setState(state => ({ ...state, image }));
     }
     chooseImage = async () => {
         let image = await ImagePicker.launchImageLibraryAsync({
@@ -35,6 +34,7 @@ class CardEditor extends Component {
         });
 
         if (image.cancelled) return;
+        console.log(image);
         this.setImage(image);
     };
     // takePhoto = async () => {
@@ -54,67 +54,38 @@ class CardEditor extends Component {
         this.props.collapse && this.props.collapse();
     };
     render() {
-        const {
-            question,
-            answer,
-            image,
-            questionHeight,
-            answerHeight
-        } = this.state;
+        const { question, answer, image } = this.state;
 
         return (
-            <View style={styles.container}>
-                {this.props.isListItem &&
+            <Form style={styles.container}>
+                {this.props.isListItem && (
                     <Button
                         borderRadius={30}
                         containerViewStyle={styles.button}
                         title="Cancel"
                         backgroundColor={greyColor}
                         onPress={this.props.collapse}
-                    />}
-
-                <FormLabel style={styles.label}>Question</FormLabel>
-                <FormInput
-                    multiline
-                    onLayout={e =>
-                        this.setState({ questionHeight: e.nativeEvent.layout })}
-                    placeholder="Text for card front"
-                    placeholderTextColor={greyColor}
-                    style={[
-                        styles.text,
-                        { height: Math.max(35, questionHeight) }
-                    ]}
-                    maxLength={300}
-                    value={question}
-                    onContentSizeChange={e =>
-                        this.setState({
-                            questionHeight: e.nativeEvent.height
-                        })}
-                    onChangeText={question => this.setState({ question })}
-                />
-                <FormLabel style={styles.label}>Answer</FormLabel>
-                <FormInput
-                    multiline
-                    onLayout={e =>
-                        this.setState({ answerHeight: e.nativeEvent.layout })}
-                    placeholder="Text for card back"
-                    placeholderTextColor={greyColor}
-                    style={[
-                        styles.text,
-                        { height: Math.max(35, answerHeight) }
-                    ]}
-                    maxLength={300}
-                    value={answer}
-                    onContentSizeChange={e =>
-                        this.setState({
-                            answerHeight: e.nativeEvent.height
-                        })}
-                    onChangeText={answer => this.setState({ answer })}
-                />
-                <FormLabel>Image</FormLabel>
-                {image &&
-                    <Image source={{ url: image.uri }} style={styles.image} />}
-                {!image &&
+                    />
+                )}
+                <Item floatingLabel>
+                    <Label>Text for card front</Label>
+                    <Input
+                        maxLength={300}
+                        value={question}
+                        onChangeText={question => this.setState({ question })}
+                    />
+                </Item>
+                <Item floatingLabel>
+                    <Label>Text for card back</Label>
+                    <Input
+                        maxLength={300}
+                        value={answer}
+                        onChangeText={answer => this.setState({ answer })}
+                    />
+                </Item>
+                <Text style={{ alignSelf: 'center', marginVertical: 5 }}>Image</Text>
+                {image && <Image source={{ uri: image.uri }} style={styles.image} />}
+                {!image && (
                     <View style={styles.buttonGroup}>
                         <Button
                             borderRadius={30}
@@ -124,15 +95,16 @@ class CardEditor extends Component {
                             onPress={this.chooseImage}
                         />
                         {/* <Button borderRadius={30} containerViewStyle={styles.imageButton} backgroundColor={imageButtonColor} title="Take Photo" onPress={this.takePhoto} /> */}
-                    </View>}
-                {image &&
+                    </View>
+                )}
+                {image && (
                     <Button
                         borderRadius={30}
                         containerStyle={styles.imageButton}
-                        backgroundColor={greyColor}
                         title="Remove Image"
                         onPress={() => this.setImage(null)}
-                    />}
+                    />
+                )}
                 <View style={styles.buttonGroup}>
                     <Button
                         borderRadius={30}
@@ -142,17 +114,17 @@ class CardEditor extends Component {
                         backgroundColor={saveButtonColor}
                         onPress={this.onSavePress}
                     />
-                    {!this.props.isListItem &&
+                    {!this.props.isListItem && (
                         <Button
                             borderRadius={30}
                             containerViewStyle={styles.button}
                             style={styles.button}
                             title="Cancel"
-                            backgroundColor={greyColor}
                             onPress={this.props.onCancel}
-                        />}
+                        />
+                    )}
                 </View>
-            </View>
+            </Form>
         );
     }
 }
@@ -161,14 +133,16 @@ CardEditor.defaultProps = {
     cardProps: {
         question: '',
         answer: '',
-        image: {}
+        image: null
     }
 };
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        paddingVertical: 20
+        flex: 1,
+        paddingVertical: 20,
+        height: '100%',
+        width: '100%'
     },
     text: {
         fontSize: 20
@@ -194,7 +168,8 @@ const styles = StyleSheet.create({
         height: 300,
         width: 300,
         margin: 5,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        flex: 1
     }
 });
 

@@ -1,25 +1,11 @@
 import React, { Component } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Alert,
-    ListView
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ListView } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import { KeyboardAwareListView } from 'react-native-keyboard-aware-scroll-view';
 import Swipeout from 'react-native-swipeout';
-// import Swipeable from 'react-native-swipeable';
 
-import {
-    createCard,
-    updateCard,
-    updateSearchBar,
-    deleteCard,
-    listCleanup
-} from '../actions';
+import { createCard, updateCard, updateSearchBar, deleteCard, listCleanup } from '../actions';
 import cardListSelector from '../selectors/cardsSelector';
 import AnimatedInput from '../components/AnimatedInput';
 import CardEditor from '../components/CardEditor';
@@ -29,7 +15,8 @@ class ListItem extends Component {
         super(props);
 
         this.state = {
-            isExpanded: false
+            isExpanded: false,
+            closeSwipeout: false
         };
     }
     shouldComponentUpdate(nextProps, nextState) {
@@ -44,9 +31,7 @@ class ListItem extends Component {
         const { cardProps } = this.props;
         return (
             <View style={styles.listItemCollapsed}>
-                <Text style={styles.listItemText}>
-                    {cardProps.question}
-                </Text>
+                <Text style={styles.listItemText}>{cardProps.question}</Text>
             </View>
         );
     };
@@ -70,17 +55,21 @@ class ListItem extends Component {
                     this.props.deleteCard(this.props.cardProps.id);
                 }
             },
-            { text: 'Cancel' }
+            {
+                text: 'Cancel',
+                onPress: () =>
+                    this.setState(
+                        state => ({ ...state, closeSwipeout: true }),
+                        () => this.setState(state => ({ ...state, closeSwipeout: false }))
+                    )
+            }
         ]);
     };
     render() {
         const rightButtons = [
             {
                 component: (
-                    <TouchableOpacity
-                        onPress={this.onDelete}
-                        style={styles.deleteSwiper}
-                    >
+                    <TouchableOpacity onPress={this.onDelete} style={styles.deleteSwiper}>
                         <Icon color="white" name="delete" />
                     </TouchableOpacity>
                 )
@@ -88,6 +77,7 @@ class ListItem extends Component {
         ];
         return (
             <Swipeout
+                close={this.state.closeSwipeout}
                 disabled={this.state.isExpanded}
                 scroll={allow => this.props.allowScroll(allow)}
                 right={rightButtons}
@@ -95,47 +85,14 @@ class ListItem extends Component {
                 <TouchableOpacity
                     onLayout={this.onLayout}
                     activeOpacity={this.state.isExpanded ? 1 : 0.5}
-                    delayLongPress={250}
-                    onLongPress={
-                        !this.state.isExpanded ? this.onLongPress : null
-                    }
+                    delayLongPress={100}
+                    onLongPress={!this.state.isExpanded ? this.onLongPress : null}
                     style={styles.listItem}
                 >
-                    {!this.state.isExpanded
-                        ? this.renderCollapsed()
-                        : this.renderExpanded()}
+                    {!this.state.isExpanded ? this.renderCollapsed() : this.renderExpanded()}
                 </TouchableOpacity>
             </Swipeout>
         );
-        // return (
-        // 	<Swipeable
-        // 		rightContent={(
-        // 			<View style={styles.deleteSwiper}>
-        // 				<Icon color="white" name={this.state.swipeWillDelete ? "delete-forever" : "delete"}/>
-        // 			</View>
-        // 		)}
-        // 		rightActionActivationDistance={150}
-        // 		onRightActionActivate={() => this.setState({ swipeWillDelete: true })}
-        // 		onRightActionDeactivate={() => this.setState({ swipeWillDelete: false })}
-        // 		onRightActionRelease={this.onDelete}
-        // 		onSwipeStart={() => this.props.allowScroll(false)}
-        // 		onSwipeRelease={() => this.props.allowScroll(true)}
-        //
-        // 	>
-        // 		<TouchableOpacity
-        // 			onLayout={this.onLayout}
-        // 			activeOpacity={this.state.isExpanded ? 1 : .5}
-        // 			delayLongPress={250}
-        // 			onLongPress={!this.state.isExpanded ? this.onLongPress : null}
-        // 			style={styles.listItem}
-        // 			>
-        // 				{!this.state.isExpanded
-        // 					? this.renderCollapsed()
-        // 					: this.renderExpanded()
-        // 				}
-        // 			</TouchableOpacity>
-        // 		</Swipeable>
-        // );
     }
 }
 
@@ -190,6 +147,16 @@ export default class CardList extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <AnimatedInput
+                    left={
+                        <Icon
+                            size={36}
+                            containerStyle={styles.createCardButton}
+                            underlayColor="transparent"
+                            name="add"
+                            color="green"
+                            onPress={() => this.props.nav.go('CreateCard')}
+                        />
+                    }
                     icon={() => <Icon name="search" color="rgb(64, 64, 64)" />}
                     titleText="Search"
                     onChangeText={this.onChangeText}
@@ -248,12 +215,28 @@ const styles = StyleSheet.create({
         alignItems: 'center'
         // paddingRight: 16,
     },
+    createCardButton: {
+        position: 'absolute',
+        paddingHorizontal: 10,
+        zIndex: -1,
+        left: 10
+    },
     listItem: {
         paddingHorizontal: 10,
         paddingVertical: 20,
         backgroundColor: '#ffffff',
         justifyContent: 'flex-start',
         flexDirection: 'row'
+    },
+    listItemEditButton: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    actionIcon: {
+        width: 30,
+        marginHorizontal: 10
     },
     separator: {
         height: 1,

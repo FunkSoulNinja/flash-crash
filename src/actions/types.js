@@ -13,6 +13,7 @@ export const DELETE_LIST = 'DELETE_LIST';
 
 export const SET_LIST_FILTER = 'SET_LIST_FILTER';
 export const SET_USE_ALL_SWITCH = 'SET_USE_ALL_SWITCH';
+export const SET_DECK_TYPE = 'SET_DECK_TYPE';
 
 export const SET_CURRENT_CARD = 'SET_CURRENT_CARD';
 

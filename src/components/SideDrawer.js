@@ -9,17 +9,14 @@ import {
     Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Icon } from 'react-native-elements';
+// import { Icon } from 'react-native-elements';
+import { Icon } from 'native-base';
 import _ from 'lodash';
 
 import EditScreen from '../screens/EditScreen';
 import currentCardSelector from '../selectors/currentCardSelector';
 
 //TODO: add second drag button thing at bottom right to reveal a secondary drawer siderbar!
-
-//TODO: make flipdown component
-
-//TODO: Stop using fat arrow functions in panresponder create.
 
 const SIDEBAR_WIDTH = 250;
 const MOVE_DISTANCE_THRESHOLD = 100;
@@ -64,10 +61,7 @@ class SideDrawerBase extends Component {
                 this.drawerPosition.setOffset(this.drawerOffset);
                 this.drawerPosition.setValue(0);
             },
-            onPanResponderMove: Animated.event([
-                null,
-                { dx: this.drawerPosition }
-            ]),
+            onPanResponderMove: Animated.event([null, { dx: this.drawerPosition }]),
             onPanResponderRelease: (e, { dx, vx }) => {
                 this.finishMovingDrawer(dx, vx);
             }
@@ -83,8 +77,7 @@ class SideDrawerBase extends Component {
                 this.drawerPosition.setValue(0);
             },
             onPanResponderMove: (evt, { dx, vx, vy }) => {
-                if (Math.abs(vx) > Math.abs(vy) * 3)
-                    this.drawerPosition.setValue(dx);
+                if (Math.abs(vx) > Math.abs(vy) * 3) this.drawerPosition.setValue(dx);
             },
             onPanResponderRelease: (e, { dx, vx }) => {
                 this.finishMovingDrawer(dx, vx);
@@ -113,6 +106,7 @@ class SideDrawerBase extends Component {
             ]).start();
         }
     }
+
     menuButtonPress = () => {
         if (this.isOpen) {
             Animated.timing(this.drawerPosition, {
@@ -186,14 +180,8 @@ class SideDrawerBase extends Component {
         });
 
         return (
-            <View
-                style={styles.header}
-                {...this.headerPanResponder.panHandlers}
-            >
-                <AnimatedTouchable
-                    style={styles.headerLeft}
-                    onPress={this.menuButtonPress}
-                >
+            <View style={styles.header} {...this.headerPanResponder.panHandlers}>
+                <AnimatedTouchable style={styles.headerLeft} onPress={this.menuButtonPress}>
                     <Animated.View
                         style={[
                             styles.headerButton,
@@ -203,12 +191,7 @@ class SideDrawerBase extends Component {
                             }
                         ]}
                     >
-                        <Icon
-                            name="menu"
-                            color="white"
-                            size={30}
-                            iconStyle={styles.icon}
-                        />
+                        <Icon name="menu" size={30} style={styles.icon} />
                     </Animated.View>
                     <Animated.View
                         style={[
@@ -219,38 +202,30 @@ class SideDrawerBase extends Component {
                             }
                         ]}
                     >
-                        <Icon
-                            name="arrow-forward"
-                            color="white"
-                            size={30}
-                            iconStyle={styles.icon}
-                        />
+                        <Icon name="arrow-forward" size={30} style={styles.icon} />
                     </Animated.View>
                 </AnimatedTouchable>
                 <View style={styles.headerCenter}>
-                    <Text style={styles.headerText}>
-                        {this.props.nav.headerTitle}
-                    </Text>
+                    <Text style={styles.headerText}>{this.props.nav.headerTitle}</Text>
                 </View>
                 <View style={styles.headerRight}>
-                    {this.props.nav.currentScreen !== 'StudyScreen'
-                        ? <TouchableOpacity
-                              onPress={() => this.props.nav.go('StudyScreen')}
-                          >
-                              <Text style={styles.headerText}>Study</Text>
-                          </TouchableOpacity>
-                        : <TouchableOpacity
-                              onPress={() =>
-                                  this.setState({
-                                      modalOpen: !this.state.modalOpen
-                                  })}
-                          >
-                              <Text style={styles.headerText}>
-                                  {!this.state.modalOpen
-                                      ? 'Edit Card'
-                                      : 'Cancel'}
-                              </Text>
-                          </TouchableOpacity>}
+                    {this.props.nav.currentScreen !== 'StudyScreen' ? (
+                        <TouchableOpacity onPress={() => this.props.nav.go('StudyScreen')}>
+                            <Text style={styles.headerText}>Study</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity
+                            onPress={() =>
+                                this.setState({
+                                    modalOpen: !this.state.modalOpen
+                                })
+                            }
+                        >
+                            <Text style={styles.headerText}>
+                                {!this.state.modalOpen ? 'Edit Card' : 'Cancel'}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
         );
@@ -274,24 +249,21 @@ class SideDrawerBase extends Component {
         });
         return (
             <View style={styles.container}>
+                {this.renderSidebar()}
                 <Animated.View style={[styles.main, { left: drawerX }]}>
                     {this.renderHeader()}
-                    <View
-                        style={styles.mainView}
-                        {...this.mainViewPanResponder.panHandlers}
-                    >
+                    <View style={styles.mainView} {...this.mainViewPanResponder.panHandlers}>
                         {this.props.children}
-                        {this.state.modalOpen &&
+                        {this.state.modalOpen && (
                             <View style={styles.modal}>
                                 <EditScreen
                                     cardProps={this.props.currentCard}
-                                    onCancel={() =>
-                                        this.setState({ modalOpen: false })}
+                                    onCancel={() => this.setState({ modalOpen: false })}
                                 />
-                            </View>}
+                            </View>
+                        )}
                     </View>
                 </Animated.View>
-                {this.renderSidebar()}
             </View>
         );
     }
@@ -312,10 +284,8 @@ export default config => {
             _.map(config.screens, (val, keyName) => {
                 this.screens[keyName] = val;
                 this.screens[keyName].name = keyName;
-                if (!val.headerTitle)
-                    this.screens[keyName].headerTitle = keyName;
-                if (val.defaultScreen)
-                    this.setState({ CurrentScreen: this.screens[keyName] });
+                if (!val.headerTitle) this.screens[keyName].headerTitle = keyName;
+                if (val.defaultScreen) this.setState({ CurrentScreen: this.screens[keyName] });
             });
         }
 
@@ -340,11 +310,7 @@ export default config => {
             };
 
             return (
-                <SideDrawerBase
-                    {...this.props}
-                    sidebar={this.sidebar}
-                    nav={nav}
-                >
+                <SideDrawerBase {...this.props} sidebar={this.sidebar} nav={nav}>
                     <CurrentScreen.screen {...this.props} nav={nav} />
                 </SideDrawerBase>
             );
@@ -384,13 +350,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingTop: 10,
         paddingHorizontal: 10,
-        height: 65
+        height: 65,
+        width: '100%'
     },
     headerLeft: {
         flexDirection: 'row',
         flex: 1,
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: '100%',
+        width: '100%'
     },
     headerCenter: {
         flexDirection: 'row',
@@ -409,7 +378,8 @@ const styles = StyleSheet.create({
         color: 'rgb(233, 233, 233)'
     },
     icon: {
-        padding: 5
+        padding: 5,
+        color: 'white'
     },
     headerButton: {
         position: 'absolute'

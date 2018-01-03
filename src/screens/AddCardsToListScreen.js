@@ -6,12 +6,7 @@ import { connect } from 'react-redux';
 import AnimatedInput from '../components/AnimatedInput';
 
 import ListItem, { Separator } from '../components/ListItem';
-import {
-    addCardToList,
-    removeCardFromList,
-    updateSearchBar,
-    updateFilter
-} from '../actions';
+import { addCardToList, removeCardFromList, updateSearchBar, updateFilter } from '../actions';
 import { cardsSelector, listCardFilterSelector } from '../selectors';
 
 class RenderItem extends PureComponent {
@@ -26,10 +21,7 @@ class RenderItem extends PureComponent {
     }
     onPress = () => {
         if (this.props.isInList) {
-            this.props.removeCardFromList(
-                this.props.listID,
-                this.props.item.id
-            );
+            this.props.removeCardFromList(this.props.listID, this.props.item.id);
             return;
         } else if (!this.props.isInList) {
             this.props.addCardToList(this.props.listID, this.props.item.id);
@@ -49,11 +41,7 @@ class RenderItem extends PureComponent {
                         <Icon
                             size={36}
                             name="done"
-                            color={
-                                this.props.isInList
-                                    ? 'rgb(59, 161, 88)'
-                                    : 'rgb(219, 219, 219)'
-                            }
+                            color={this.props.isInList ? 'rgb(59, 161, 88)' : 'rgb(219, 219, 219)'}
                             onPress={this.onPress}
                             underlayColor="transparent"
                         />
@@ -104,9 +92,7 @@ class AddCardScreen extends PureComponent {
         );
     };
     onFilterPress = selectedIndex => {
-        this.setState({ selectedIndex }, () =>
-            this.props.updateFilter(selectedIndex)
-        );
+        this.setState({ selectedIndex }, () => this.props.updateFilter(selectedIndex));
     };
     onChangeText = input => this.props.updateSearchBar(input);
     render() {

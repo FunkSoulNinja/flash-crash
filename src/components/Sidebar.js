@@ -1,18 +1,11 @@
 import React, { PureComponent } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Animated,
-    Switch
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Switch, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Badge } from 'react-native-elements';
 
 import cardCountSelector from '../selectors/cardCountSelector';
 import listCountSelector from '../selectors/cardListCountSelector';
-import { toggleUseAllSwitch } from '../actions';
+import { toggleUseAllSwitch, setDeckType } from '../actions';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -35,9 +28,7 @@ class ListItem extends PureComponent {
         const colorInterpolate = this.animate.interpolate({
             inputRange: [0, 1],
             outputRange: [
-                currentScreen === this.props.screenName
-                    ? 'rgba(0, 0, 0, .4)'
-                    : 'rgba(0, 0, 0, 0)',
+                currentScreen === this.props.screenName ? 'rgba(0, 0, 0, .4)' : 'rgba(0, 0, 0, 0)',
                 'rgba(255, 255, 255, 0.2)'
             ]
         });
@@ -53,14 +44,10 @@ class ListItem extends PureComponent {
                 onPressOut={this.animatePressOut}
                 onPress={() => this.props.nav.go(this.props.screenName)}
             >
-                <Text style={styles.textStyle}>
-                    {this.props.text}
-                </Text>
-                {!!this.props.badge &&
-                    <Badge
-                        value={this.props.badge}
-                        textStyle={{ color: 'gold' }}
-                    />}
+                <Text style={styles.textStyle}>{this.props.text}</Text>
+                {!!this.props.badge && (
+                    <Badge value={this.props.badge} textStyle={{ color: 'gold' }} />
+                )}
             </AnimatedTouchable>
         );
     }
@@ -70,34 +57,31 @@ const Sidebar = props => {
     return (
         <View style={styles.container}>
             <ListItem nav={props.nav} screenName="Home" text="Home" />
-            <ListItem
-                nav={props.nav}
-                screenName="CreateCard"
-                text="Create New Flashcard"
-            />
-            <ListItem
-                badge={props.cardCount}
-                nav={props.nav}
-                screenName="Cards"
-                text="Cards"
-            />
-            <ListItem
-                badge={props.listCount}
-                nav={props.nav}
-                screenName="CardLists"
-                text="Lists"
-            />
+            <ListItem nav={props.nav} screenName="CreateCard" text="Create New Flashcard" />
+            <ListItem badge={props.cardCount} nav={props.nav} screenName="Cards" text="Cards" />
+            <ListItem badge={props.listCount} nav={props.nav} screenName="CardLists" text="Lists" />
             <ListItem nav={props.nav} screenName="StudyScreen" text="Study" />
             <View style={styles.separator} />
             <View style={styles.listItem}>
                 <Text style={styles.textStyle}>Use All Cards</Text>
                 <Switch
                     onTintColor="rgb(54, 122, 131)"
-                    onValueChange={() =>
-                        props.toggleUseAllSwitch(!props.useAllCards)}
+                    onValueChange={() => props.toggleUseAllSwitch(!props.useAllCards)}
                     value={props.useAllCards}
                 />
             </View>
+            {Platform.OS !== 'android' && (
+                <View style={styles.listItem}>
+                    <Text style={styles.textStyle}>
+                        Deck Type: {props.XRayDeck ? 'X-Ray' : 'Flip'}
+                    </Text>
+                    <Switch
+                        onTintColor="rgb(54, 122, 131)"
+                        onValueChange={() => props.setDeckType(!props.XRayDeck)}
+                        value={props.XRayDeck}
+                    />
+                </View>
+            )}
         </View>
     );
 };
@@ -134,8 +118,9 @@ const mapStateToProps = state => {
     return {
         cardCount: cardCountSelector(state),
         listCount: listCountSelector(state),
-        useAllCards: state.useAllSwitch
+        useAllCards: state.useAllSwitch,
+        XRayDeck: state.XRayDeck
     };
 };
 
-export default connect(mapStateToProps, { toggleUseAllSwitch })(Sidebar);
+export default connect(mapStateToProps, { toggleUseAllSwitch, setDeckType })(Sidebar);

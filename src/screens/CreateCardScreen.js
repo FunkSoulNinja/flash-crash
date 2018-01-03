@@ -1,21 +1,13 @@
 import React, { Component } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    Keyboard,
-    Image,
-    LayoutAnimation,
-    ScrollView,
-    KeyboardAvoidingView
-} from 'react-native';
+import { View, StyleSheet, Image, LayoutAnimation } from 'react-native';
 import { connect } from 'react-redux';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
+import { Form, Item, Input, Label, Container, Content, Text } from 'native-base';
 import { ImagePicker } from 'expo';
 
 import { createCard } from '../actions/cardActions';
 
-const placeholderTextColor = 'rgb(143, 143, 143)';
+// const placeholderTextColor = 'rgb(143, 143, 143)';
 const imageButtonColor = 'rgb(55, 90, 119)';
 const saveButtonColor = 'rgb(18, 183, 244)';
 
@@ -38,11 +30,11 @@ export default class CreateCardScreen extends Component {
     }
     chooseImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true
+            allowsEditing: false
         });
 
         if (result.cancelled) return;
-        this.setState({ image: result });
+        this.setState(state => ({ ...state, image: result }));
     };
     // takePhoto = async () => {
     // 	let result = await ImagePicker.launchCameraAsync({ allowsEditing: true })
@@ -66,7 +58,7 @@ export default class CreateCardScreen extends Component {
     }
     componentDidUpdate() {
         if (this.state.showMessage) {
-            setTimeout(() => this.setState({ showMessage: false }), 2250);
+            setTimeout(() => this.setState(state => ({ ...state, showMessage: false })), 1500);
         }
     }
     onSavePress = () => {
@@ -79,95 +71,81 @@ export default class CreateCardScreen extends Component {
                 answer: '',
                 image: null
             },
-            () => this.setState({ showMessage: true })
+            () => this.setState(state => ({ ...state, showMessage: true }))
         );
     };
     render() {
         const { question, answer, image } = this.state;
 
         return (
-            <View style={{ flex: 1 }}>
-                <ScrollView
-                    style={styles.container}
-                    activeOpacity={1}
-                    onPress={Keyboard.dismiss}
-                >
-                    <KeyboardAvoidingView behavior="padding">
-                        <FormLabel style={styles.label}>Question</FormLabel>
-                        <FormInput
-                            multiline
-                            placeholder="Text for card front"
-                            placeholderTextColor={placeholderTextColor}
-                            style={styles.text}
-                            maxLength={300}
-                            value={question}
-                            onChangeText={question =>
-                                this.setState({ question })}
-                        />
-                        <FormLabel style={styles.label}>Answer</FormLabel>
-                        <FormInput
-                            multiline
-                            placeholder="Text for card back"
-                            placeholderTextColor={placeholderTextColor}
-                            style={styles.text}
-                            maxLength={300}
-                            value={answer}
-                            onChangeText={answer => this.setState({ answer })}
-                        />
-                        <FormLabel>Image</FormLabel>
-                        {image &&
-                            <Image
-                                source={{ url: image.uri }}
-                                style={styles.image}
-                            />}
-                        <View style={styles.buttons}>
-                            {!image &&
-                                <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    <Button
-                                        borderRadius={30}
-                                        containerViewStyle={styles.imageButton}
-                                        backgroundColor={imageButtonColor}
-                                        title="Choose Image"
-                                        onPress={this.chooseImage}
-                                    />
-                                    {/* <Button borderRadius={30} containerViewStyle={styles.imageButton} backgroundColor={imageButtonColor} title="Take Photo" onPress={this.takePhoto} /> */}
-                                </View>}
-                            {image &&
+            <Container>
+                <Content>
+                    <Form>
+                        <Item floatingLabel>
+                            <Label>Question</Label>
+                            <Input
+                                maxLength={300}
+                                value={question}
+                                onChangeText={question => this.setState({ question })}
+                            />
+                        </Item>
+                        <Item floatingLabel>
+                            <Label>Answer</Label>
+                            <Input
+                                maxLength={300}
+                                value={answer}
+                                onChangeText={answer => this.setState({ answer })}
+                            />
+                        </Item>
+                        <Text style={styles.centerLabel}>Image</Text>
+                    </Form>
+                    {image && <Image source={{ uri: image.uri }} style={styles.image} />}
+                    <View style={styles.buttons}>
+                        {!image && (
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <Button
                                     borderRadius={30}
-                                    backgroundColor="rgb(143, 143, 143)"
-                                    title="Remove Image"
-                                    onPress={() =>
-                                        this.setState({ image: null })}
-                                />}
-                        </View>
-                        <Button
-                            borderRadius={30}
-                            containerViewStyle={styles.saveButton}
-                            title="Save"
-                            backgroundColor={saveButtonColor}
-                            onPress={this.onSavePress}
-                        />
-                    </KeyboardAvoidingView>
-                </ScrollView>
-                {this.state.showMessage &&
+                                    containerViewStyle={styles.imageButton}
+                                    backgroundColor={imageButtonColor}
+                                    title="Choose Image"
+                                    onPress={this.chooseImage}
+                                />
+                                {/* <Button borderRadius={30} containerViewStyle={styles.imageButton} backgroundColor={imageButtonColor} title="Take Photo" onPress={this.takePhoto} /> */}
+                            </View>
+                        )}
+                        {image && (
+                            <Button
+                                borderRadius={30}
+                                backgroundColor="rgb(143, 143, 143)"
+                                title="Remove Image"
+                                onPress={() => this.setState({ image: null })}
+                            />
+                        )}
+                    </View>
+                    <Button
+                        borderRadius={30}
+                        containerViewStyle={styles.saveButton}
+                        title="Save"
+                        backgroundColor={saveButtonColor}
+                        onPress={this.onSavePress}
+                    />
+                </Content>
+                {this.state.showMessage && (
                     <View style={styles.savedMessage}>
                         <Text style={styles.savedMessageText}>Saved!</Text>
-                    </View>}
-            </View>
+                    </View>
+                )}
+            </Container>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    text: {
-        fontSize: 20
-    },
-    label: {
-        marginVertical: 10
+    centerLabel: {
+        textAlign: 'center',
+        marginVertical: 10,
+        fontSize: 20,
+        color: 'rgb(100, 100, 100)'
     },
     imageButton: {
         flex: 1

@@ -1,13 +1,5 @@
 import React, { Component } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    Animated,
-    Alert,
-    TextInput
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, Animated, Alert, TextInput } from 'react-native';
 import { Icon, Badge, ButtonGroup } from 'react-native-elements';
 import { connect } from 'react-redux';
 
@@ -69,55 +61,50 @@ class RenderItem extends Component {
                         <Icon
                             size={36}
                             name={'done'}
-                            color={
-                                this.props.item.active
-                                    ? GREEN
-                                    : 'rgb(219, 219, 219)'
-                            }
+                            color={this.props.item.active ? GREEN : 'rgb(219, 219, 219)'}
                             onPress={this.onCheckmarkPress}
                             underlayColor="transparent"
                         />
                     </Animated.View>
                 }
                 mainContent={
-                    !this.props.editMode
-                        ? <Text style={styles.listItemText}>
-                              {this.props.item.name}
-                          </Text>
-                        : <TextInput
-                              style={styles.listItemInput}
-                              autoCorrect={false}
-                              value={this.props.item.name}
-                              onChangeText={text =>
-                                  this.props.updateListName(
-                                      this.props.item.id,
-                                      text
-                                  )}
-                          />
+                    !this.props.editMode ? (
+                        <Text style={styles.listItemText}>{this.props.item.name}</Text>
+                    ) : (
+                        <TextInput
+                            style={styles.listItemInput}
+                            autoCorrect={false}
+                            value={this.props.item.name}
+                            onChangeText={text =>
+                                this.props.updateListName(this.props.item.id, text)
+                            }
+                        />
+                    )
                 }
                 rightContent={
                     <View style={styles.listItemRightContent}>
-                        {!this.props.editMode &&
-                            <Badge value={this.props.item.cards.length} />}
-                        {!this.props.editMode
-                            ? <Icon
-                                  name="chevron-right"
-                                  size={40}
-                                  color="rgb(92, 92, 92)"
-                                  onPress={() =>
-                                      this.props.navigation.navigate('List', {
-                                          id: this.props.item.id,
-                                          name: this.props.item.name,
-                                          addCardToList: this.props
-                                              .addCardToList
-                                      })}
-                              />
-                            : <Icon
-                                  name="delete-forever"
-                                  size={40}
-                                  color={RED}
-                                  onPress={this.onDelete}
-                              />}
+                        {!this.props.editMode && <Badge value={this.props.item.cards.length} />}
+                        {!this.props.editMode ? (
+                            <Icon
+                                name="chevron-right"
+                                size={40}
+                                color="rgb(92, 92, 92)"
+                                onPress={() =>
+                                    this.props.navigation.navigate('List', {
+                                        id: this.props.item.id,
+                                        name: this.props.item.name,
+                                        addCardToList: this.props.addCardToList
+                                    })
+                                }
+                            />
+                        ) : (
+                            <Icon
+                                name="delete-forever"
+                                size={40}
+                                color={RED}
+                                onPress={this.onDelete}
+                            />
+                        )}
                     </View>
                 }
             />
@@ -188,27 +175,20 @@ class CardListScreen extends Component {
                     placeholder="Name For List"
                     titleText="Create New"
                     finishButton="Create"
-                    onChangeText={text => this.setState({ newListName: text })}
-                    icon={() =>
-                        <Icon
-                            name="create-new-folder"
-                            color="rgb(64, 64, 64)"
-                        />}
+                    onChangeText={newListName => this.setState({ newListName })}
+                    icon={() => <Icon name="create-new-folder" color="rgb(64, 64, 64)" />}
                     right={
                         <Icon
                             name={!this.state.editMode ? 'mode-edit' : 'done'}
                             size={36}
                             containerStyle={styles.editButton}
-                            color={
-                                !this.state.editMode
-                                    ? 'rgb(204, 200, 57)'
-                                    : 'green'
-                            }
+                            color={!this.state.editMode ? 'rgb(204, 200, 57)' : 'green'}
                             underlayColor="transparent"
                             onPress={() =>
                                 this.setState({
                                     editMode: !this.state.editMode
-                                })}
+                                })
+                            }
                         />
                     }
                 />

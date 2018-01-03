@@ -1,11 +1,7 @@
 import _ from 'lodash';
 import { REHYDRATE } from 'redux-persist/constants';
 
-import {
-	CREATE_CARD,
-	UPDATE_CARD,
-	DELETE_CARD,
-} from '../actions/types';
+import { CREATE_CARD, UPDATE_CARD, DELETE_CARD } from '../actions/types';
 
 // const INITIAL_STATE = {
 // 	"1": {
@@ -26,17 +22,17 @@ import {
 // };
 
 export default (state = {}, action) => {
-	switch(action.type) {
-	case REHYDRATE:
-		return action.payload.cards || {};
-	case CREATE_CARD:
-		return { ...state, [action.payload.id]: { ...action.payload } };
-	case UPDATE_CARD:
-		return { ...state, [action.payload.id]: { ...action.payload } };
-	case DELETE_CARD:
-		return _.omit(state, action.payload);
+    switch (action.type) {
+        case REHYDRATE:
+            return action.payload.cards || {};
+        case CREATE_CARD:
+            return { ...state, [action.payload.id]: { ...action.payload } };
+        case UPDATE_CARD:
+            return { ...state, [action.payload.id]: { ...action.payload } };
+        case DELETE_CARD:
+            return _.omit(state, action.payload);
 
-	default:
-		return state;
-	}
-}
+        default:
+            return state;
+    }
+};

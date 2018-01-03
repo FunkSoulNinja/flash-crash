@@ -1,24 +1,31 @@
 {
-  "expo": {
-    "name": "Flash Crash",
-    "description": "A flash card study app.",
-    "slug": "flash-crash",
-    "privacy": "unlisted",
-    "sdkVersion": "19.0.0",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "primaryColor": "#cccccc",
-    "icon": "./assets/icons/app-icon.png",
-    "loading": {
-      "icon": "./assets/icons/launch-image.png",
-      "hideExponentText": true
-    },
-    "packagerOpts": {
-      "assetExts": ["ttf", "mp4"]
-    },
-    "ios": {
-      "supportsTablet": false,
-	  "bundleIdentifier": "com.theanthonyfalcon.flashcrash"
+    "expo": {
+        "name": "Flash Crash",
+        "description": "A flash card study app.",
+        "slug": "flash-crash",
+        "privacy": "unlisted",
+        "sdkVersion": "24.0.0",
+        "version": "1.1.1",
+        "orientation": "portrait",
+        "primaryColor": "#cccccc",
+        "splash": {
+            "image": "assets/launch-image.png",
+            "backgroundColor": "#404040"
+        },
+        "icon": "./assets/icons/flash-crash-icon.png",
+        "loading": {
+            "hideExponentText": true,
+            "backgroundImage": "./assets/launch-image.png"
+        },
+        "packagerOpts": {
+            "assetExts": ["ttf", "mp4"]
+        },
+        "ios": {
+            "supportsTablet": false,
+            "bundleIdentifier": "com.theanthonyfalcon.flashcrash"
+        },
+        "android": {
+            "package": "com.theanthonyfalcon.flashcrash"
+        }
     }
-  }
 }

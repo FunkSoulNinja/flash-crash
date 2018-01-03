@@ -1,45 +1,55 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Expo, { Permissions } from 'expo';
 import { Card, Icon } from 'react-native-elements';
 
 import { BACKGROUND_GREY, LIGHT_GREY, GREEN } from '../colors';
 
-const MenuButton = props =>
+const MenuButton = props => (
     <TouchableOpacity onPress={props.onPress}>
         <Card containerStyle={styles.cardContainer}>
-            <Text style={styles.buttonText}>
-                {props.text}
-            </Text>
+            <Text style={styles.buttonText}>{props.text}</Text>
             {!!props.icon && <Icon name={props.icon} size={36} color={GREEN} />}
         </Card>
-    </TouchableOpacity>;
+    </TouchableOpacity>
+);
 
-const HomeScreen = props => {
-    return (
-        <View style={styles.container}>
-            <MenuButton
-                text="Create Card"
-                icon="note-add"
-                onPress={() => props.nav.go('CreateCard')}
-            />
-            <MenuButton
-                text="Manage Cards"
-                icon="note"
-                onPress={() => props.nav.go('Cards')}
-            />
-            <MenuButton
-                text="Manage Lists"
-                icon="view-list"
-                onPress={() => props.nav.go('CardLists')}
-            />
-            <MenuButton
-                text="Study"
-                icon="school"
-                onPress={() => props.nav.go('StudyScreen')}
-            />
-        </View>
-    );
-};
+class HomeScreen extends React.Component {
+    async buttonThing() {
+        const ting = await Expo.DocumentPicker.getDocumentAsync();
+    }
+    render() {
+        return (
+            <View style={styles.container}>
+                <MenuButton
+                    text="Create Card"
+                    icon="note-add"
+                    onPress={() => this.props.nav.go('CreateCard')}
+                />
+                <MenuButton
+                    text="Manage Cards"
+                    icon="note"
+                    onPress={() => this.props.nav.go('Cards')}
+                />
+                <MenuButton
+                    text="Manage Lists"
+                    icon="view-list"
+                    onPress={() => this.props.nav.go('CardLists')}
+                />
+                <MenuButton
+                    text="Study"
+                    icon="school"
+                    onPress={() => this.props.nav.go('StudyScreen')}
+                />
+                {/* <MenuButton
+                    text="Document Picker"
+                    icon="add"
+                    onPress={this.buttonThing}
+                /> */}
+            </View>
+        );
+    }
+}
 
 const styles = StyleSheet.create({
     container: {
